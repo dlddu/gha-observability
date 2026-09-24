@@ -71,7 +71,7 @@
   1. 해당 run의 `duration_sec`를 UI 표시값과 비교
   2. job의 `queue_wait_sec`를 `queued` → `in_progress` 이벤트의 페이로드 타임스탬프 차이로 수동 계산하여 비교
   3. step별 `duration_sec` 합계와 job `duration_sec` 비교
-  4. `business_date`가 `run_started_at`의 UTC 일자와 일치하는지 확인
+  4. `business_date`가 페이로드 `created_at`의 UTC 일자와 일치하는지 확인하고, 재실행(`run_attempt` 2)이 있는 run이 attempt 1과 같은 파티션에 1건으로 남는지 확인
 - **기대 결과**: 1·2번 오차 ±2초 이내. 3번은 step 합계가 job 시간 이하다(job에는 러너 준비 등 step 외 시간이 포함됨). 4번 일치
 - **검증 AC**: AC3-3
 
