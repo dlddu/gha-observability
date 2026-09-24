@@ -75,10 +75,11 @@ Bronze는 **이벤트 스트림**이지 **현재 상태**가 아니다. 하나�
   - `queue_wait_sec`: job의 `queued` 이벤트 시각 → `in_progress` 이벤트 시각 차이 (**수신 시각이 아닌 페이로드 타임스탬프 기준**)
   - `duration_sec`: run/job/step 각각의 시작~종료 차이
   - `is_rerun`: `run_attempt > 1`
-  - `business_date`: `run_started_at`의 UTC 일자
+  - `business_date`: 해당 엔티티 페이로드 `created_at`의 UTC 일자 (run은 `workflow_run.created_at`, job·step은 `workflow_job.created_at`)
 - **달성 가치**: V1, V3
 - **검증 방법**: 실제 실행 1건에 대해 GitHub UI에 표시된 소요 시간과 계산값을 대조 → 오차 ±2초 이내
 - **비고**: 큐 대기 시간은 셀프호스티드 러너 용량 판단의 핵심 지표이므로, 실행 시간과 반드시 분리해 보관한다.
+- **설계 근거 (`business_date`)**: `run_started_at`은 재실행 시점에 갱신되므로, 이를 기준으로 삼으면 같은 run이 attempt마다 서로 다른 파티션에 남는다. 불변인 `created_at`을 써야 엔티티당 파티션이 하나로 고정되고 AC3-2의 상태 수렴이 한 파티션 안에서 끝난다.
 
 ### AC3-4: 비즈니스 일자 기준 재파티셔닝
 
